@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>WakeUp Object</h2>
+
+<button type="button" onclick="wakeUp()">WakeUp object</button>
+
+<p>Click the button to wake up your object. Once your object received this request, it will connect to REMROB and you will be able to control it. If the connection already exists, your requests will be ignored. You will get no respons!</p>
+
+<p id="demo"></p>
+
+<script>
+function wakeUp() {
+  	var xhttp = new XMLHttpRequest();
+  	xhttp.onreadystatechange=function(){
+    	if(xhttp.readyState == 4 && xhttp.status == 200){
+      		document.getElementById("demo").innerHTML = xhttp.responseText;
+    	} else 
+      	console.log("Error", xhttp.statusText,xhttp);  
+     
+  	};
+  	xhttp.open("HEAD", "https://remrob-755-555:9000?t=" + Math.random(), true);
+	xhttp.timeout = 2000;
+	xhttp.send();
+	//setTimeout(function(){xhttp.abort();}, 8000);
+}
+</script>
+
+</body>
+</html>
