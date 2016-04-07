@@ -1,0 +1,40 @@
+var net = require('net');
+
+var server = net.createServer(function(socket) {
+  console.log('CONNECTED: ' + socket.remoteAddress +':'+ socket.remotePort);
+  startPyScript()
+  //console.log(socket);
+
+  // incoming messages from clients.
+  socket.on('data', function (data) {
+    //console.log(data.toString('utf8'));
+  });
+
+  // Detect if the TCP client leaves
+  socket.on('end', function () {
+    console.log('DISCONNECTED');
+  });
+
+  //socket.destroy();
+  //socket.end();
+  // If for some reasons the socket closing not happened, the connection can still be manually closed 
+  setTimeout(function(){ socket.end(); }, 15000);
+});
+
+// Port 443 would require sudo
+//server.listen(443, '0.0.0.0');
+server.listen(9000, '0.0.0.0');
+
+var python=null;
+
+// A python script as child process will be started, if it still not exists.
+function startPyScript(){
+  if(python) return console.log('py already running....');
+  console.log('starting py....');
+  python = require('child_process').spawn('python',["/home/pi/modbus/ws7-server_with_file_server.py"]); // second argument is array of parameters
+  //python.stdout.on('data', function(data){ console.log('python data:',data); });
+  python.on('close', function(code){
+    console.log('Python closing');
+    python=null;
+  });
+}
